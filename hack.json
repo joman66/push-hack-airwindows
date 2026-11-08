@@ -1,0 +1,18 @@
+{
+  "id": "airwindows",
+  "name": "Airwindows",
+  "description": "An effect chain of up to 8 Airwindows effects (510 effects in 22 categories, from Airwindows Consolidated). Audio from a Live track comes in over Ableton Link Audio, runs through the chain, and goes back to Live as the Link channel Airwindows. An app of Push Hack Home (Shift + Help): the chain, a category browser and a page of parameters for each effect, on Push's screen and encoders. The web page shows and edits the same chain. Needs push-audio-loopback (Link mode, with inputs), push-manager + push-display for the Push editor.",
+  "version": "0.1.0-alpha",
+  "author": "joman66",
+  "binary": "airwindows",
+  "port": 7712,
+  "enabled": true,
+  "web_ui": {
+    "label": "Airwindows",
+    "path": "/"
+  },
+  "surface": {
+    "label": "AIRWIN",
+    "color": "orange"
+  }
+}

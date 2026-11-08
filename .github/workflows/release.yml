@@ -1,0 +1,67 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify version match
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          HACK_VERSION=$(sed -n 's/.*"version": *"\([^"]*\)".*/\1/p' hack.json)
+          if [ "$TAG_VERSION" != "$HACK_VERSION" ]; then
+            echo "ERROR: tag $TAG_VERSION does not match hack.json version $HACK_VERSION"
+            exit 1
+          fi
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.25'
+          cache-dependency-path: src/go.sum
+
+      # The binary links statically (glibc and libstdc++ inside), so the
+      # runner's newer glibc does not matter on the Push.
+      - name: Build Airwindows library
+        run: make -j"$(nproc)" lib
+
+      - name: Test
+        run: make test
+
+      - name: Build and package
+        run: |
+          make package
+          file airwindows | grep -q 'statically linked'
+          ./airwindows -version
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: airwindows.tar.gz
+          prerelease: ${{ contains(github.ref_name, '-') }}
+
+      - name: Commit release.json
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          git fetch origin main
+          git checkout -f main
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          cat > release.json << JSON
+          {
+            "version": "${VERSION}",
+            "download_url": "https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/airwindows.tar.gz",
+            "released_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          }
+          JSON
+          git add release.json
+          git commit -m "chore: release.json for ${{ github.ref_name }}" || echo "no change"
+          git push origin main
