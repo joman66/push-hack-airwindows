@@ -10,10 +10,6 @@ An effect chain of up to 8 [Airwindows](https://www.airwindows.com) effects that
 
 Status: alpha. Tested off the device: every effect, the chain, the Push screens, and audio through the real `core/audiobus` server. **Not yet tested on a Push 3.**
 
-## What it is not
-
-Airwindows makes only audio effects. There are no Airwindows instruments or MIDI effects, so this hack has no instrument and the pads play nothing. It processes audio that Live sends to it.
-
 ## Needs
 
 | Part | Why |
