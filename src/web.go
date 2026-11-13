@@ -175,6 +175,9 @@ func newWebMux(ch *Chain, cat *Catalog, audio *audioStatus, surf *surface) *http
 }
 
 func runWebServer(port int, ch *Chain, cat *Catalog, audio *audioStatus, surf *surface, stop <-chan struct{}) {
+	if port <= 0 {
+		return
+	}
 	srv := &http.Server{
 		Addr:              fmt.Sprintf(":%d", port),
 		Handler:           newWebMux(ch, cat, audio, surf),

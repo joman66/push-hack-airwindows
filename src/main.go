@@ -23,15 +23,11 @@ import (
 	"time"
 
 	"github.com/federico-pepe/ableton-push-hack/core/alsaseq"
-	"github.com/federico-pepe/ableton-push-hack/core/hackcfg"
 	"github.com/federico-pepe/ableton-push-hack/core/pmclient"
 	"github.com/federico-pepe/ableton-push-hack/core/push3"
 )
 
-const (
-	defaultPushManagerURL = "http://localhost:7701"
-	defaultWebPort        = 7712 // local testing only; push-catalog writes the real one
-)
+const defaultPushManagerURL = "http://localhost:7701"
 
 var buildVersion = "dev"
 
@@ -94,11 +90,7 @@ func runSupervised() {
 	if err != nil {
 		log.Fatalf("hack dir: %v", err)
 	}
-	hcfg, err := hackcfg.Load(*configPath, defaultWebPort)
-	if err != nil {
-		log.Printf("%s: %v (web page on %d)", *configPath, err, defaultWebPort)
-		hcfg.Port = defaultWebPort
-	}
+	webPort := resolveWebPort(*configPath)
 	pmURL := defaultPushManagerURL
 	if v := os.Getenv("PUSH_MANAGER_URL"); v != "" {
 		pmURL = v
@@ -159,7 +151,7 @@ func runSupervised() {
 		}
 	}()
 
-	go runWebServer(hcfg.Port, chain, cat, audio, surf, stop)
+	go runWebServer(webPort, chain, cat, audio, surf, stop)
 
 	<-stop
 	<-audioDone

@@ -32,6 +32,7 @@ Tests (`src/*_test.go`) use the real engine. `TestEveryEffectProcesses` runs all
 | `src/render.go` | 960x160 frames, ASCII only |
 | `src/surface.go` | Focus/blur, ALSA control input from Push's Live Port, LEDs, display loop, Home status |
 | `src/web.go`, `src/ui/index.html` | Web page and JSON API |
+| `src/port.go` | Web page port: the one push-catalog wrote, else the lowest free one from 7711 that no other hack claims, saved into hack.json |
 | `src/main.go` | Supervisor (restarts the child on a crash), wiring |
 | `third_party/airwin2rack/` | Vendored `src/` of Airwindows Consolidated, unchanged. MIT. |
 
@@ -44,6 +45,7 @@ Tests (`src/*_test.go`) use the real engine. `TestEveryEffectProcesses` runs all
 - Screen strings are ASCII. Effect names and categories are checked in `TestCatalog`.
 - Controls count only while the app has the surface (`focused`), only from the Live Port, only on channel 0 (other channels carry pad MPE; CC 74 would read as encoder 4).
 - Every LED the app lights must be in `ledCCs`, or it is never turned off (`TestLEDs`).
+- **No port in `hack.json`, and no fixed default port.** push-catalog assigns ports. A fixed 7712 fallback once took Audio Loopback's port (fixed in 1.0.1, `src/port.go`).
 - Chain changes from the web page and from Push both go through `Chain`. `UI.validateLocked` sends a page whose slot was removed back to the chain view.
 
 ## Update Airwindows

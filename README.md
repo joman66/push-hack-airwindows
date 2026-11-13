@@ -60,7 +60,7 @@ API (JSON):
 In `/data/push-hack/hacks/airwindows/`:
 
 - `airwindows`: the binary (static: no other file needed)
-- `hack.json`
+- `hack.json`: push-catalog writes the web page's `port` here. If it has none, or another hack claims the same port, Airwindows picks the lowest free port from 7711 up and saves it here.
 - `airwindows-chain.json`: the chain (effects by name, parameter values 0..1, bypass, gains). It is kept across updates.
 
 Log: `/data/push-hack/logs/airwindows.log`.
